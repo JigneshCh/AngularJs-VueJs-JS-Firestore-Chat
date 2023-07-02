@@ -12,6 +12,6 @@ This is a Sample code for chat functionality in different frontend technology
 
 ## View Demo
 
- - Url_1: http://13.234.224.145/Jignesh-demo/Together-Js-AngularJs-VueJs/Js.html
- - Url_2: http://jc-deloper.com/Jignesh-Demo/Together-Js-AngularJs-VueJs/Js.html
+ - Url_1: http://13.234.224.145/Jignesh-demo/AngularJs-VueJs-JS-Firestore-Chat/Js.html
+ - Url_2: http://jc-deloper.com/Jignesh-demo/AngularJs-VueJs-JS-Firestore-Chat/Js.html
 
