@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/css/whatsapp.css">
+  <link rel="stylesheet" href="assets/css/bg-loader.css">
+  <title>AngularJs | Firebase | Chat</title>
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
+  <!--Adding Bootstrap-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
+<body ng-app="angularTable">
+  <div class="background-green"></div>
+  <div class="main-container" ng-controller="listgroups">
+    <div class="left-container">
+      <!--header -->
+      <div class="header">
+        <div class="user-img">
+          <img class="dp" src="assets/img/team.png" alt="">
+        </div>
+        <div class="nav-icons">
+          <li><i class="fa fa-solid fa-users"></i></li>
+          <li><i class="fa fa-solid fa-message">
+            </i></li>
+          <li><i class="fa fa-solid fa-ellipsis-vertical"></i></li>
+        </div>
+      </div>
+      <!--notification -->
+      <div class="notif-box">
+        <i class="fa fa-solid fa-bell-slash"></i>
+        <div class="notif-text">
+          <p>Get Notified of New Messages</p>
+          <a href="#">Turn on Desktop Notifications ›</a>
+        </div>
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      <!--search-container -->
+      <div class="search-container">
+        <div class="input">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search or start new chat   ">
+        </div>
+        <i class="fa-sharp fa-solid fa-bars-filter"></i>
+      </div>
+      <!--chats -->
+      <div class="chat-list" id="chat_list">
+        <div class="chat-box" ng-repeat="i in loderitems">
+          <div class="img-box">
+            <img class="img-cover" src="assets/img/team.png" alt="">
+          </div>
+          <div class="chat-details">
+            <div class="text-head">
+              <h4 class="background-loader hw20xfull"></h4>
+            </div>
+            <div class="text-message">
+              <p class="background-loader w20xfull">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;</p>
+              <b class="background-loader nobg">&nbsp;</b>
+            </div>
+          </div>
+        </div>
+        <div class="chat-box" ng-repeat="group in groupList" ng-class="{'active' : (group.id == selectedGroup.id)}">
+          <div class="img-box" ng-click="loadGroup(group)">
+            <img class="img-cover" src="assets/img/team.png" alt="">
+          </div>
+          <div class="chat-details" ng-click="loadGroup(group)">
+            <div class="text-head">
+              <h4>{{ group.title }}</h4>
+              <p class="time unread">{{ group.last_log }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="right-container">
+      <!--header -->
+      <div class="header">
+        <div class="img-text">
+          <div class="user-img">
+            <img class="dp" src="assets/img/team.png" alt="">
+          </div>
+          <h4 class="selected_group_title">{{selectedGroup.title}}<br><span>Online</span></h4>
+        </div>
+        <div class="pull-right">
+          <a href="Js.html" target="_blank">JS</a> |
+          <a href="AngularJs.html" target="_blank">AngularJs</a> |
+          <a href="VueJs.html" target="_blank">VueJs</a>
+        </div>
+      </div>
+      <!--chat-container -->
+      <div class="chat-container" id="chat_container">
+        <div class="message-box" ng-repeat="chat in chatList"
+          ng-class="{'my-message' : (user && chat.uid == user.username), 'friend-message' : (!user || chat.uid != user.username)}">
+          <p class="text messageBubble">
+            <b class="nameTag">{{chat.saurce}} - {{chat.name}}</b><br /> {{chat.text}}<br>
+            <span>{{chat.hm}}</span>
+          </p>
+        </div>
+      </div>
+      <!--input-bottom -->
+      <div class="chatbox-input input_message" ng-if="user && user.username">
+        <i class="fa fa-regular fa-face-grin"></i>
+        <i class="fa fa-sharp fa-solid fa-paperclip"></i>
+        <input type="text" id="my_input" ng-model="myinput" ng-keypress="($event.which === 13)?sendMessage(myinput):0"
+          placeholder="Type a message">
+        <i class="fa fa-solid fa-send" id="send" ng-click="sendMessage(myinput)"></i>
+      </div>
+      <div class="chatbox-input input_login" ng-if="!user || !user.username">
+        <input type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" value="Login" />
+      </div>
+    </div>
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Login with any unique username</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" id="username">
+              </div>
+              <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name">
+              </div>
+              <button type="button" id="login" class="btn btn-primary" ng-click="login()">Submit</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="assets/js/scriptAngular.js"></script>
+</body>
+
+</html>
